@@ -41,7 +41,7 @@ runs:
         ORGANIZATION: ${{ inputs.organization }}
         PROJECT_NUMBER: ${{ inputs.project-id }}
         TARGET_COLUMN: ${{ inputs.target-column }}
-        ISSUE_ID: ${{ inputs.issue_id }}
+        ISSUE_ID: ${{ inputs.issue-id }}
       shell: bash
       run: |
         gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
