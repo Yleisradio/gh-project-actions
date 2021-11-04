@@ -42,6 +42,7 @@ runs:
         PROJECT_NUMBER: ${{ inputs.project-id }}
         TARGET_COLUMN: ${{ inputs.target-column }}
         ISSUE_ID: ${{ inputs.issue_id }}
+      shell: bash
       run: |
         gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
           query($org: String!, $number: Int!) {
@@ -71,6 +72,7 @@ runs:
         PROJECT_NUMBER: ${{ inputs.project-id }}
         TARGET_COLUMN: ${{ inputs.target-column }}
         ISSUE_ID: ${{ inputs.issue_id }}
+      shell: bash
       run: |
         echo "Looking for issue $ISSUE_ID in project $PROJECT_ID"
 
@@ -111,6 +113,7 @@ runs:
         PROJECT_NUMBER: ${{ inputs.project-id }}
         TARGET_COLUMN: ${{ inputs.target-column }}
         ISSUE_ID: ${{ inputs.issue_id }}
+      shell: bash
       run: |
         item_id="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
           mutation ($project_id: ID!, $content_id: ID!) {
@@ -137,6 +140,7 @@ runs:
         PROJECT_NUMBER: ${{ inputs.project-id }}
         TARGET_COLUMN: ${{ inputs.target-column }}
         ISSUE_ID: ${{ inputs.issue_id }}
+      shell: bash
       run: |
         gh api graphql --include --header 'GraphQL-Features: projects_next_graphql' -f query='
         mutation (
