@@ -71,7 +71,7 @@ runs:
         ORGANIZATION: ${{ inputs.organization }}
         PROJECT_NUMBER: ${{ inputs.project-id }}
         TARGET_COLUMN: ${{ inputs.target-column }}
-        ISSUE_ID: ${{ inputs.issue_id }}
+        ISSUE_ID: ${{ inputs.issue-id }}
       shell: bash
       run: |
         echo "Looking for issue $ISSUE_ID in project $PROJECT_ID"
@@ -112,7 +112,7 @@ runs:
         ORGANIZATION: ${{ inputs.organization }}
         PROJECT_NUMBER: ${{ inputs.project-id }}
         TARGET_COLUMN: ${{ inputs.target-column }}
-        ISSUE_ID: ${{ inputs.issue_id }}
+        ISSUE_ID: ${{ inputs.issue-id }}
       shell: bash
       run: |
         item_id="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
@@ -139,7 +139,7 @@ runs:
         ORGANIZATION: ${{ inputs.organization }}
         PROJECT_NUMBER: ${{ inputs.project-id }}
         TARGET_COLUMN: ${{ inputs.target-column }}
-        ISSUE_ID: ${{ inputs.issue_id }}
+        ISSUE_ID: ${{ inputs.issue-id }}
       shell: bash
       run: |
         gh api graphql --include --header 'GraphQL-Features: projects_next_graphql' -f query='
