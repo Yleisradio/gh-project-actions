@@ -33,15 +33,15 @@ inputs:
     required: true
 runs:
   using: composite
-  env:
-    GITHUB_TOKEN: ${{ inputs.token }}
-    ORGANIZATION: ${{ inputs.organization }}
-    PROJECT_NUMBER: ${{ inputs.project-id }}
-    TARGET_COLUMN: ${{ inputs.target-column }}
-    ISSUE_ID: ${{ inputs.issue_id }}
   steps:
     - name: Get project and field data
       id: requesting_project_data
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+        ORGANIZATION: ${{ inputs.organization }}
+        PROJECT_NUMBER: ${{ inputs.project-id }}
+        TARGET_COLUMN: ${{ inputs.target-column }}
+        ISSUE_ID: ${{ inputs.issue_id }}
       run: |
         gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
           query($org: String!, $number: Int!) {
@@ -65,6 +65,12 @@ runs:
 
     - name: Check if issue is not yet on project board
       id: check_if_added_to_projectnext
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+        ORGANIZATION: ${{ inputs.organization }}
+        PROJECT_NUMBER: ${{ inputs.project-id }}
+        TARGET_COLUMN: ${{ inputs.target-column }}
+        ISSUE_ID: ${{ inputs.issue_id }}
       run: |
         echo "Looking for issue $ISSUE_ID in project $PROJECT_ID"
 
@@ -99,6 +105,12 @@ runs:
     - name: Add Issue to the project board
       if: steps.check_if_added_to_projectnext.outputs.EXISTS == 0
       id: add_issue_to_project
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+        ORGANIZATION: ${{ inputs.organization }}
+        PROJECT_NUMBER: ${{ inputs.project-id }}
+        TARGET_COLUMN: ${{ inputs.target-column }}
+        ISSUE_ID: ${{ inputs.issue_id }}
       run: |
         item_id="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
           mutation ($project_id: ID!, $content_id: ID!) {
@@ -119,6 +131,12 @@ runs:
     - name: Update the status field (ie. set the kanban column)
       if: steps.check_if_added_to_projectnext.outputs.EXISTS == 0
       id: set_issue_status_to_project_column
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+        ORGANIZATION: ${{ inputs.organization }}
+        PROJECT_NUMBER: ${{ inputs.project-id }}
+        TARGET_COLUMN: ${{ inputs.target-column }}
+        ISSUE_ID: ${{ inputs.issue_id }}
       run: |
         gh api graphql --include --header 'GraphQL-Features: projects_next_graphql' -f query='
         mutation (
