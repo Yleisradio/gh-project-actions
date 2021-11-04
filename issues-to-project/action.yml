@@ -27,7 +27,7 @@ inputs:
   target-column:
     description: "Kanban board target column for the issues"
     required: false
-    default: "Backlock"
+    default: "Backlog"
   issue-id:
     description: "Id of the new issue"
     required: true
@@ -37,6 +37,8 @@ runs:
     GITHUB_TOKEN: ${{ inputs.token }}
     ORGANIZATION: ${{ inputs.organization }}
     PROJECT_NUMBER: ${{ inputs.project-id }}
+    TARGET_COLUMN: ${{ inputs.target-column }}
+    ISSUE_ID: ${{ inputs.issue_id }}
   steps:
     - name: Get project and field data
       id: requesting_project_data
@@ -59,12 +61,12 @@ runs:
 
         echo 'PROJECT_ID='$( jq --raw-output '.data.organization.projectNext.id' project_data.json ) | tee -a $GITHUB_ENV
         echo 'STATUS_FIELD_ID='$( jq --raw-output '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") | .id' project_data.json ) | tee -a $GITHUB_ENV
-        echo 'STATUS_FIELD_VALUE_ID='$( jq  --raw-output '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") |.settings | fromjson.options[] | select(.name=="${{ inputs.target-column }}") |.id' project_data.json ) | tee -a $GITHUB_ENV
+        echo 'STATUS_FIELD_VALUE_ID='$( jq  --raw-output '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") |.settings | fromjson.options[] | select(.name=="${{ env.TARGET_COLUMN }}") |.id' project_data.json ) | tee -a $GITHUB_ENV
 
     - name: Check if issue is not yet on project board
       id: check_if_added_to_projectnext
       run: |
-        echo "Looking for issue ${{ inputs.issue-id }} in project $PROJECT_ID"
+        echo "Looking for issue $ISSUE_ID in project $PROJECT_ID"
 
         gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
           query ($project_id: ID!) {
@@ -105,7 +107,7 @@ runs:
                 id
               }
             }
-          }' -f project_id=$PROJECT_ID  -f content_id=${{ inputs.issue-id }} --jq '.data.addProjectNextItem.projectNextItem.id')"
+          }' -f project_id=$PROJECT_ID  -f content_id=$ISSUE_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
 
         echo "ITEM_ID="${item_id} | tee -a $GITHUB_ENV
 
