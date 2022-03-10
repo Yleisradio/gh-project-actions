@@ -1,0 +1,17 @@
+name: Add new issue to Artikkelitiimi project (beta)
+on:
+  issues:
+    types:
+      - opened
+      - reopened
+
+jobs:
+  add_issue_to_project:
+    name: 'Add issue to project board (new, reopened, labelled)'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Yleisradio/gh-project-actions/issues-to-project@main
+        with:
+          token: ${{secrets.GH_ACTIONS_TOKEN}}
+          project-id: 16
+          issue-id: ${{ github.event.issue.node_id }}

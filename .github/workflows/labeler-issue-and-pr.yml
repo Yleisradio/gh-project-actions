@@ -1,0 +1,28 @@
+name: Add labels to issues and PRs
+
+on:
+  issues:
+    types: [opened, unlabeled, reopened]
+  pull_request:
+    types: [opened, unlabeled]
+
+jobs:
+  add_labels_common:
+    name: 'Add repo label to issues and PRs'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add label
+        uses: andymckay/labeler@master
+        with:
+          add-labels: GH-ACTIONS
+
+  add_labels_mew_issue:
+    name: 'Add label "NEW" to new issues'
+    needs: [add_labels_common]
+    runs-on: ubuntu-latest
+    if: github.event.issue && github.event.action == 'opened'
+    steps:
+      - name: Add label
+        uses: andymckay/labeler@master
+        with:
+          add-labels: NEW
