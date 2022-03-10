@@ -20,7 +20,7 @@ gh api graphql \
         }
       }
     }
-' \
+  ' \
   -f org="$ORGANIZATION" \
   -F number="$PROJECT_NUMBER" >project_data.json
 
@@ -54,7 +54,7 @@ gh api graphql --paginate \
         }
       }
     }
-' \
+  ' \
   -f project_id="$PROJECT_ID" >>board_issues.json
 
 EXISTS=$(jq '.data.node.items.nodes[].content.id' board_issues.json | grep -c "$ISSUE_ID" || :)
