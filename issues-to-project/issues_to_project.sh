@@ -4,7 +4,6 @@
 echo "- Get project and field data"
 
 gh api graphql \
-  --header 'GraphQL-Features: projects_next_graphql' \
   -f query='
     query($org: String!, $number: Int!) {
       organization(login: $org){
@@ -32,8 +31,8 @@ STATUS_FIELD_VALUE_ID="$(jq --arg column "$TARGET_COLUMN" --raw-output '.data.or
 echo "- Looking for issue $ISSUE_ID in project $PROJECT_ID"
 
 # Paginated API call results to multiple cnnsequent calls (but automatically).
-gh api graphql --paginate \
-  --header 'GraphQL-Features: projects_next_graphql' \
+gh api graphql \
+  --paginate \
   -f query='
     query ($project_id: ID!, $endCursor: String) {
       node(id: $project_id) {
@@ -68,7 +67,6 @@ if [[ $EXISTS -eq 0 ]]; then
   # `updateProjectNextItemField` to update the item.
   # @see https://docs.github.com/en/issues/trying-out-the-new-projects-experience/using-the-api-to-manage-projects#adding-an-item-to-a-project
   gh api graphql \
-    --header 'GraphQL-Features: projects_next_graphql' \
     -f query='
       mutation ($project_id: ID!, $content_id: ID!) {
         addProjectNextItem(input: {projectId: $project_id, contentId: $content_id }) {
@@ -92,7 +90,6 @@ if [[ $EXISTS -eq 0 ]]; then
   # response headers reveals useful information such as accepted token scope.
   gh api graphql \
     --include \
-    --header 'GraphQL-Features: projects_next_graphql' \
     -f query='
       mutation (
         $project: ID!
