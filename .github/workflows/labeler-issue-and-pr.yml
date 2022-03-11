@@ -1,5 +1,8 @@
 name: Add labels to issues and PRs
 
+env:
+  REPOSITORY_LABEL: GH-tooling
+
 on:
   issues:
     types: [opened, unlabeled, reopened]
@@ -14,7 +17,7 @@ jobs:
       - name: Add label
         uses: andymckay/labeler@master
         with:
-          add-labels: GH-tooling
+          add-labels: ${{ REPOSITORY_LABEL }}
 
   add_label_new_issue:
     name: 'Add label "NEW" to new issues'
