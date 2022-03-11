@@ -7,7 +7,7 @@ on:
     types: [opened, unlabeled]
 
 jobs:
-  add_labels_common:
+  add_label_repo:
     name: 'Add repo label to issues and PRs'
     runs-on: ubuntu-latest
     steps:
@@ -16,9 +16,9 @@ jobs:
         with:
           add-labels: GH-tooling
 
-  add_labels_mew_issue:
+  add_label_new_issue:
     name: 'Add label "NEW" to new issues'
-    needs: [add_labels_common]
+    needs: [add_label_repo]
     runs-on: ubuntu-latest
     if: github.event.issue && github.event.action == 'opened'
     steps:
