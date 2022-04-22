@@ -25,7 +25,6 @@ gh api graphql \
 
 PROJECT_ID="$(jq --raw-output '.data.organization.projectNext.id' project_data.json)"
 STATUS_FIELD_ID="$(jq --raw-output '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") | .id' project_data.json)"
-STATUS_FIELD_VALUE_ID="$(jq --arg column "$TARGET_COLUMN" --raw-output '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") | .settings | fromjson.options[] | select(.name==$column) | .id' project_data.json)"
 
 # Check if issue is not yet on project board
 echo "- Looking for issue $ISSUE_ID in project $PROJECT_ID"
@@ -83,36 +82,41 @@ if [[ $EXISTS -eq 0 ]]; then
   ITEM_ID=$(cat new_item_id.txt)
 
   echo "- New board item id is ${ITEM_ID}."
-  echo "- Update the status field (the kanban column)"
 
   # Keep --include option to see response headers in Action logs.
   # It may be useful if the token expires or does not have all credentials it needs since
   # response headers reveals useful information such as accepted token scope.
-  gh api graphql \
-    --include \
-    -f query='
-      mutation (
-        $project: ID!
-        $item: ID!
-        $status_field: ID!
-        $status_value: String!
-        ) {
-        set_status: updateProjectNextItemField ( input: {
-            projectId: $project
-            itemId: $item
-            fieldId: $status_field
-            value: $status_value
-          }) {
-          projectNextItem {
-            id
+  if [ ! -z "$TARGET_COLUMN" ]; then
+    echo "- Update the status field (the kanban column): ${TARGET_COLUMN}."
+    STATUS_FIELD_VALUE_ID="$(jq --arg column "$TARGET_COLUMN" --raw-output '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") | .settings | fromjson.options[] | select(.name==$column) | .id' project_data.json)"
+    gh api graphql \
+      --include \
+      -f query='
+        mutation (
+          $project: ID!
+          $item: ID!
+          $status_field: ID!
+          $status_value: String!
+          ) {
+          set_status: updateProjectNextItemField ( input: {
+              projectId: $project
+              itemId: $item
+              fieldId: $status_field
+              value: $status_value
+            }) {
+            projectNextItem {
+              id
+            }
           }
         }
-      }
-    ' \
-    -f project="$PROJECT_ID" \
-    -f item="$ITEM_ID" \
-    -f status_field="$STATUS_FIELD_ID" \
-    -f status_value="$STATUS_FIELD_VALUE_ID"
+      ' \
+      -f project="$PROJECT_ID" \
+      -f item="$ITEM_ID" \
+      -f status_field="$STATUS_FIELD_ID" \
+      -f status_value="$STATUS_FIELD_VALUE_ID"
+  else
+    echo "- Status field update omitted, since target-column input empty."
+  fi
 else
   echo "- Issue $ISSUE_ID is already in the project"
 fi

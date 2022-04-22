@@ -27,7 +27,6 @@ inputs:
   target-column:
     description: "Kanban board target column for the issues"
     required: false
-    default: "Backlog"
   issue-id:
     description: "Id of the new issue"
     required: true
