@@ -1,0 +1,13 @@
+# @see https://github.com/Yleisradio/articleteam-gh-actions#using-label-sync-action
+name: Sync common labels (manually)
+
+on: workflow_dispatch
+
+jobs:
+  labels_sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Labeler
+        uses: Yleisradio/articleteam-gh-actions/label-sync@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
